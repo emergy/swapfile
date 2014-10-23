@@ -25,16 +25,16 @@ case "$1" in
     losetup $lodev $SWAP_FILE
     mkswap  $lodev
     swapon  $lodev
-	;;
+    ;;
   stop)
     lodev=$(losetup -a|grep "$SWAP_FILE"|awk -F':' '{printf $1}')
     swapoff $lodev
     losetup -d $lodev
     ;;
   *)
-	echo "Usage: $SCRIPTNAME {start|stop}" >&2
-	exit 3
-	;;
+    echo "Usage: $SCRIPTNAME {start|stop}" >&2
+    exit 3
+    ;;
 esac
 
 :
