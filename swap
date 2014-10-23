@@ -1,0 +1,40 @@
+#! /bin/sh
+### BEGIN INIT INFO
+# Provides:          skeleton
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Example initscript
+# Description:       This file should be used to construct scripts to be
+#                    placed in /etc/init.d.
+### END INIT INFO
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+DESC="Init swap file"
+NAME=swap
+SCRIPTNAME=/etc/init.d/$NAME
+SIZE=6G
+SWAP_FILE=/var/swap0
+
+
+case "$1" in
+  start)
+    lodev=$(losetup -f)
+    [ -e $SWAP_FILE ] || truncate -s $SIZE $SWAP_FILE
+    losetup $lodev $SWAP_FILE
+    mkswap  $lodev
+    swapon  $lodev
+	;;
+  stop)
+    lodev=$(losetup -a|grep "$SWAP_FILE"|awk -F':' '{printf $1}')
+    swapoff $lodev
+    losetup -d $lodev
+    ;;
+  *)
+	echo "Usage: $SCRIPTNAME {start|stop}" >&2
+	exit 3
+	;;
+esac
+
+:
